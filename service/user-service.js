@@ -1,10 +1,13 @@
 const UserModel = require("../models/User");
+const GameCardsModel = require("../models/GameCards");
+const LogoGamesModel = require("../models/LogoGames");
 const mailService = require("../service/mail-service");
 const tokenService = require("./token-service");
 const UserDto = require("../dtos/userDto");
 const ApiError = require("../exceptions/api-error");
 const bcrypt = require("bcryptjs");
 const uuid = require("uuid");
+const CategoriesModel = require("../models/Categories");
 
 class UserService {
   async registration(email, password) {
@@ -20,10 +23,11 @@ class UserService {
       password: hashPassword,
       activationLink,
     });
-    await mailService.sendActivationMail(
-      email,
-      `${process.env.API_URL}/api/auth/activate/${activationLink}`
-    );
+
+    // await mailService.sendActivationMail(
+    //   email,
+    //   `${process.env.API_URL}/api/auth/activate/${activationLink}`
+    // );
 
     const userDto = new UserDto(user); // email , id ,isActivated
     const tokens = tokenService.generateToken({ ...userDto });
@@ -60,6 +64,26 @@ class UserService {
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
     return { ...tokens, user: userDto };
+  }
+
+  async getAllUsers() {
+    const users = await UserModel.find();
+    return users;
+  }
+
+  async getAllGameCards() {
+    const gameCards = await GameCardsModel.find();
+    return gameCards;
+  }
+
+  async getAllCategories() {
+    const categories = await CategoriesModel.find();
+    return categories;
+  }
+
+  async getAllLogoGames() {
+    const categories = await LogoGamesModel.find();
+    return categories;
   }
 
   async logout(refreshToken) {

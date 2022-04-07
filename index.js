@@ -12,9 +12,14 @@ const app = express(); // start our app
 //Middleware
 app.use(express.json()); // parse our json
 app.use(cookieParser()); // Middleware for cookie
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL,
+  })
+);
 app.use("/api/auth", router); // listen our request
-app.use(errorMiddleWare); 
+app.use(errorMiddleWare);
 
 const start = async () => {
   try {

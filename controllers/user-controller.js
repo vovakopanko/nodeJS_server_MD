@@ -56,6 +56,42 @@ class UserController {
     }
   }
 
+  async getUsers(req, res, next) {
+    try {
+      const users = await userService.getAllUsers();
+      return res.json(users);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async getCategories(req, res, next) {
+    try {
+      const users = await userService.getAllCategories();
+      return res.json(users);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async getGameCards(req, res, next) {
+    try {
+      const gameCards = await userService.getAllGameCards();
+      return res.json(gameCards);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async getLogoGames(req, res, next) {
+    try {
+      const logoGames = await userService.getAllLogoGames();
+      return res.json(logoGames);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async refresh(req, res, next) {
     try {
       const { refreshToken } = req.cookies;

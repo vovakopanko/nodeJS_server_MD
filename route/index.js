@@ -13,6 +13,10 @@ router.put("/signin", controller.login); //authorization
 router.get("/logout", controller.logout);
 router.get("/activate/:link", controller.activate);
 router.get("/refresh", controller.refresh);
+router.get("/users", controller.getUsers);
+router.get("/gameCards", controller.getGameCards);
+router.get("/categories", controller.getCategories);
+router.get("/logoGames", controller.getLogoGames);
 // router.post('/addPost', authMiddleware, controller.addPost)
 // router.post('/deletePost', authMiddleware, controller.delete)
 
