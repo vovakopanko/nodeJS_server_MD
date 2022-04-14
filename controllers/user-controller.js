@@ -21,6 +21,24 @@ class UserController {
     }
   }
 
+  async changeUserPassword(req, res, next) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return next(ApiError.BadRequest("Validation error ", errors.array()));
+      }
+      const { email, password } = req.body;
+      const userData = await userService.changePassword(email, password);
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true, // can't change cookies inside the browser
+      });
+      return res.json(userData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async login(req, res, next) {
     try {
       const { email, password } = req.body;

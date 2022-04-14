@@ -39,6 +39,23 @@ class UserService {
     };
   }
 
+  async changePassword(email, password) {
+    const candidate = await UserModel.findOne({ email }); //await response
+    if (!candidate) {
+      throw ApiError.BadRequest(
+        `User with such an address ${email} doesn't exists!`
+      );
+    }
+    const hashPassword = await bcrypt.hash(password, 3);
+    candidate.password = hashPassword;
+
+    await candidate.save();
+    return {
+      candidate: candidate,
+      password: candidate.password,
+    };
+  }
+
   async activate(activationLink) {
     const user = await UserModel.findOne({ activationLink });
     if (!user) {

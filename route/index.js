@@ -17,6 +17,12 @@ router.get("/users", controller.getUsers);
 router.get("/gameCards", controller.getGameCards);
 router.get("/categories", controller.getCategories);
 router.get("/logoGames", controller.getLogoGames);
+router.post(
+  "/change-password",
+  body("email").isEmail(),
+  body("password").isLength({ min: 5, max: 40 }),
+  controller.changeUserPassword
+);
 // router.post('/addPost', authMiddleware, controller.addPost)
 // router.post('/deletePost', authMiddleware, controller.delete)
 
