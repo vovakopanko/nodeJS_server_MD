@@ -8,6 +8,7 @@ const ApiError = require("../exceptions/api-error");
 const bcrypt = require("bcryptjs");
 const uuid = require("uuid");
 const CategoriesModel = require("../models/Categories");
+const e = require("express");
 
 class UserService {
   async registration(email, password) {
@@ -35,24 +36,33 @@ class UserService {
 
     return {
       ...tokens, // return access token and refresh token
+      hashPassword,
       user: userDto,
     };
   }
 
-  async changePassword(email, password) {
+  async changePassword(email, password, currentPassword) {
     const candidate = await UserModel.findOne({ email }); //await response
+    // const currentPasswordUser = await bcrypt.hash(currentPassword, 3);
     if (!candidate) {
       throw ApiError.BadRequest(
         `User with such an address ${email} doesn't exists!`
       );
     }
-    const hashPassword = await bcrypt.hash(password, 3);
-    candidate.password = hashPassword;
+    const passwordComparison = await bcrypt.compare(
+      currentPassword,
+      candidate.password
+    );
+    if (passwordComparison) {
+      const hashPassword = await bcrypt.hash(password, 3);
+      candidate.password = hashPassword;
+      await candidate.save();
+    } else {
+      throw ApiError.BadRequest(`Invalid current password!`);
+    }
 
-    await candidate.save();
     return {
       candidate: candidate,
-      password: candidate.password,
     };
   }
 
@@ -107,6 +117,7 @@ class UserService {
     if (!user) {
       throw ApiError.BadRequest(`User ${email} is not registered`);
     }
+    const hashPassword = await bcrypt.hash(password, 3);
     const isPassEquals = await bcrypt.compare(password, user.password);
     if (!isPassEquals) {
       throw ApiError.BadRequest("Invalid username or password");
@@ -115,7 +126,7 @@ class UserService {
     const tokens = tokenService.generateToken({ ...userDto });
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
-    return { ...tokens, user: userDto };
+    return { ...tokens, user: userDto, password: hashPassword };
   }
 
   async getAllUsers() {

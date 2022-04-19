@@ -36,6 +36,7 @@ router.post(
   "/change-password",
   body("email").isEmail(),
   body("password").isLength({ min: 5, max: 40 }),
+  body("currentPassword"),
   controller.changeUserPassword
 );
 router.post(

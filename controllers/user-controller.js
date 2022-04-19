@@ -27,8 +27,12 @@ class UserController {
       if (!errors.isEmpty()) {
         return next(ApiError.BadRequest("Validation error ", errors.array()));
       }
-      const { email, password } = req.body;
-      const userData = await userService.changePassword(email, password);
+      const { email, password, currentPassword } = req.body;
+      const userData = await userService.changePassword(
+        email,
+        password,
+        currentPassword
+      );
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true, // can't change cookies inside the browser
