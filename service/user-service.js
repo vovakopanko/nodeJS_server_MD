@@ -56,6 +56,41 @@ class UserService {
     };
   }
 
+  async changeAllUserInfo(email, userName, description, address, phoneNumber) {
+    const candidate = await UserModel.findOne({ email }); //await response
+    if (!candidate) {
+      throw ApiError.BadRequest(
+        `User with such an address ${email} doesn't exists!`
+      );
+    }
+
+    candidate.profileDescription = description;
+    candidate.address = address;
+    candidate.userName = userName;
+    candidate.phoneNumber = phoneNumber;
+
+    await candidate.save();
+    return {
+      candidate,
+      userName: candidate.userName,
+      phoneNumber: candidate.phoneNumber,
+    };
+  }
+
+  async changePhotoUser(email, photoUser) {
+    const candidate = await UserModel.findOne({ email }); //await response
+    if (!candidate) {
+      throw ApiError.BadRequest(
+        `User with such an address ${email} doesn't exists!`
+      );
+    }
+    candidate.photoUser = photoUser;
+    await candidate.save();
+    return {
+      photoUser: candidate.photoUser,
+    };
+  }
+
   async activate(activationLink) {
     const user = await UserModel.findOne({ activationLink });
     if (!user) {

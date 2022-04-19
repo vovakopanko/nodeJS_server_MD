@@ -39,6 +39,32 @@ class UserController {
     }
   }
 
+  async changeUserInfo(req, res, next) {
+    try {
+      const { email, userName, description, address, phoneNumber } = req.body;
+      const userData = await userService.changeAllUserInfo(
+        email,
+        userName,
+        description,
+        address,
+        phoneNumber
+      );
+      return res.json(userData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async changeUserAvatar(req, res, next) {
+    try {
+      const { email, photoUser } = req.body;
+      const userData = await userService.changePhotoUser(email, photoUser);
+      return res.json(userData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async login(req, res, next) {
     try {
       const { email, password } = req.body;
