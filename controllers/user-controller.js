@@ -1,7 +1,7 @@
 const userService = require("../service/user-service");
 const { validationResult } = require("express-validator");
 const ApiError = require("../exceptions/api-error");
-
+const GameCardsModel = require("../models/GameCards");
 class UserController {
   async registration(req, res, next) {
     try {
@@ -123,9 +123,25 @@ class UserController {
   }
 
   async getGameCards(req, res, next) {
+    const { age, genres } = req.query;
+    let filter;
     try {
-      const gameCards = await userService.getAllGameCards();
-      return res.json(gameCards);
+      if (genres && age) {
+        filter = await GameCardsModel.find({
+          age: age,
+          genres: genres,
+        });
+      }
+      if (!genres && !age) {
+        filter = await userService.getAllGameCards();
+      }
+      if (genres && !age) {
+        filter = await GameCardsModel.find({ genres: genres });
+      }
+      if (!genres && age) {
+        filter = await GameCardsModel.find({ age: age });
+      }
+      return res.json(filter);
     } catch (e) {
       next(e);
     }

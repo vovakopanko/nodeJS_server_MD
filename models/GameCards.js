@@ -8,6 +8,7 @@ const GameCardsSchema = new Schema({
   amountStars: { type: Number },
   age: { type: String },
   description: { type: String },
+  genres: { type: String },
 });
 
 module.exports = model("GameCards", GameCardsSchema);
