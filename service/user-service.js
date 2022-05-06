@@ -9,6 +9,8 @@ const bcrypt = require("bcryptjs");
 const uuid = require("uuid");
 const CategoriesModel = require("../models/Categories");
 const e = require("express");
+const GameCards = require("../models/GameCards");
+const GameDto = require("../dtos/gameDto");
 
 class UserService {
   async registration(email, password) {
@@ -84,6 +86,97 @@ class UserService {
       candidate,
       userName: candidate.userName,
       phoneNumber: candidate.phoneNumber,
+    };
+  }
+
+  async deleteGameCard(uniqueId) {
+    const card = await GameCards.findOne({ uniqueId });
+    if (!card) {
+      throw ApiError.BadRequest(`Card with ${uniqueId} doesn't exists!`);
+    }
+    await card.delete();
+    return {
+      card,
+    };
+  }
+
+  async createGameCardInfo(
+    title,
+    alt,
+    description,
+    url,
+    amountStars,
+    price,
+    genres,
+    age,
+    imagePlatforms,
+    uniqueId
+  ) {
+    // const game = await GameCards.findOne({ title });
+    // if (game) {
+    //   throw ApiError.BadRequest(`Card with such an ${title} exists!`);
+    // }
+
+    const id = await GameCards.findOne({ uniqueId });
+    if (id) {
+      throw ApiError.BadRequest(
+        `Card with such an title ${uniqueId} doesn't exists!`
+      );
+    }
+
+    const newGame = await GameCards.create({
+      title,
+      price,
+      url,
+      alt,
+      amountStars,
+      age,
+      description,
+      genres,
+      imagePlatforms,
+      uniqueId,
+    });
+
+    const gameDto = new GameDto(newGame);
+
+    return {
+      newGame: gameDto,
+    };
+  }
+
+  async changeGameCardInfo(
+    title,
+    alt,
+    description,
+    url,
+    amountStars,
+    price,
+    genres,
+    age,
+    imagePlatforms,
+    uniqueId
+  ) {
+    const card = await GameCards.findOne({ uniqueId }); //await response
+    if (!card) {
+      throw ApiError.BadRequest(
+        `Card with such an title ${uniqueId} doesn't exists!`
+      );
+    }
+
+    card.title = title;
+    card.price = price;
+    card.url = url;
+    card.alt = alt;
+    card.amountStars = amountStars;
+    card.age = age;
+    card.description = description;
+    card.genres = genres;
+    card.imagePlatforms = imagePlatforms;
+    card.uniqueId = uniqueId;
+
+    await card.save();
+    return {
+      card,
     };
   }
 

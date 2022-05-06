@@ -59,6 +59,80 @@ class UserController {
     }
   }
 
+  async deleteCardInfo(req, res, next) {
+    try {
+      const { uniqueId } = req.body;
+      const card = await userService.deleteGameCard(uniqueId);
+      return res.json(uniqueId);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async createNewCard(req, res, next) {
+    try {
+      const {
+        title,
+        alt,
+        description,
+        url,
+        amountStars,
+        price,
+        genres,
+        age,
+        imagePlatforms,
+        uniqueId,
+      } = req.body;
+      const cardData = await userService.createGameCardInfo(
+        title,
+        alt,
+        description,
+        url,
+        amountStars,
+        price,
+        genres,
+        age,
+        imagePlatforms,
+        uniqueId
+      );
+      return res.json(cardData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async changeCardInfo(req, res, next) {
+    try {
+      const {
+        title,
+        alt,
+        description,
+        url,
+        amountStars,
+        price,
+        genres,
+        age,
+        imagePlatforms,
+        uniqueId,
+      } = req.body;
+      const cardData = await userService.changeGameCardInfo(
+        title,
+        alt,
+        description,
+        url,
+        amountStars,
+        price,
+        genres,
+        age,
+        imagePlatforms,
+        uniqueId
+      );
+      return res.json(cardData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async changeUserAvatar(req, res, next) {
     try {
       const { email, photoUser } = req.body;

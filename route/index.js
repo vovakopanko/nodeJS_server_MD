@@ -49,6 +49,35 @@ router.post(
   controller.changeUserInfo
 );
 router.post(
+  "/update-card-info",
+  body("title"),
+  body("alt"),
+  body("description"),
+  body("url"),
+  body("amountStars"),
+  body("price"),
+  body("genres"),
+  body("age"),
+  body("imagePlatforms"),
+  body("uniqueId"),
+  controller.changeCardInfo
+);
+router.post(
+  "/create-game-card",
+  body("title"),
+  body("alt"),
+  body("description"),
+  body("url"),
+  body("amountStars"),
+  body("price"),
+  body("genres"),
+  body("age"),
+  body("imagePlatforms"),
+  body("uniqueId"),
+  controller.createNewCard
+);
+router.delete("/delete-card", body("uniqueId"), controller.deleteCardInfo);
+router.post(
   "/update-profile-avatar",
   body("photoUser"),
   controller.changeUserAvatar
